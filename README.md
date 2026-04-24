@@ -73,6 +73,104 @@ $AEGIS_SECRETS_PATH/
   backups/           previous source.7z copies
 ```
 
+## Full PC Setup Or Recovery
+
+Use this checklist when setting up a fresh machine or rebuilding the workflow
+from scratch.
+
+Clone the repository:
+
+```bash
+mkdir -p ~/workspaces
+cd ~/workspaces
+git clone git@github.com:YOUR_USER/aegis-bitwarden-backup.git
+cd aegis-bitwarden-backup
+```
+
+Create the local config:
+
+```bash
+mkdir -p ~/.config/aegis
+cat > ~/.config/aegis/config.env <<'EOF'
+AEGIS_SECRETS_PATH="$HOME/projects/security/secrets"
+AEGIS_STATE_DIR="$HOME/.config/aegis"
+AEGIS_DROPBOX_CREDENTIALS_FILE="$HOME/.config/aegis/dropbox.json"
+EOF
+```
+
+Create the secrets directory:
+
+```bash
+mkdir -p "$HOME/projects/security/secrets/source"
+```
+
+Configure Dropbox credentials if you want to upload backups:
+
+```bash
+python3 ./authenticateDropbox.py \
+  --app-key YOUR_DROPBOX_APP_KEY \
+  --app-secret YOUR_DROPBOX_APP_SECRET \
+  --credentials-file ~/.config/aegis/dropbox.json
+```
+
+This command writes `~/.config/aegis/dropbox.json` with `app_key`,
+`app_secret`, and `refresh_token`. If you already have those values from a
+separate secure record, you can create that JSON file manually instead. Do not
+commit it.
+
+Place encrypted exports in `$HOME/projects/security/secrets/source/`:
+
+```text
+aegis-diario.json
+aegis-vault.json
+bitwarden-diario.json
+bitwarden-vault.json
+```
+
+Create the encrypted archive:
+
+```bash
+./zipSource.sh
+```
+
+Upload it after Dropbox credentials are configured:
+
+```bash
+./uploadToDropbox.sh
+```
+
+## Standard Operation
+
+Use this flow when Aegis or Bitwarden changed and you need to refresh the
+backup.
+
+Export the changed vaults from Aegis or Bitwarden, then copy the encrypted JSON
+files into:
+
+```text
+$AEGIS_SECRETS_PATH/source/
+```
+
+Use the expected filenames from the next section. Replace only the files that
+changed.
+
+Rebuild the encrypted archive:
+
+```bash
+cd ~/workspaces/aegis-bitwarden-backup
+./zipSource.sh
+```
+
+The archive password is requested twice and must match. The script writes
+`source.7z`, writes `source.7z.sha256`, and backs up any previous archive under
+`backups/`.
+
+Upload the new archive if Dropbox upload is configured:
+
+```bash
+./uploadToDropbox.sh
+```
+
 ## Expected Source Files
 
 Place encrypted exports in `source/` with these names:
@@ -90,68 +188,7 @@ Bitwarden files are optional, but when present they must be password-protected
 encrypted JSON exports. The derived plaintext Bitwarden JSON is written only to
 `target/`.
 
-## Quick Start
-
-Create or update `source.7z` from encrypted exports:
-
-```bash
-./zipSource.sh
-```
-
-Restore `source/` from `source.7z`:
-
-```bash
-./generateSourceFromZipFile.sh
-```
-
-Generate temporary decrypted output:
-
-```bash
-./generateTargetFromSource.sh --keep-target
-```
-
-Restore `source/` and then generate `target/` in one command:
-
-```bash
-./generateTargetFromZipFile.sh --keep-target
-```
-
-Upload the backup to Dropbox after configuration:
-
-```bash
-./uploadToDropbox.sh
-```
-
-## Workflows
-
-### Create The First Backup
-
-1. Export encrypted Aegis and Bitwarden JSON files.
-2. Copy them into `$AEGIS_SECRETS_PATH/source/`.
-3. Run:
-
-```bash
-./zipSource.sh
-```
-
-The script prompts for the archive password, creates `source.7z`, writes
-`source.7z.sha256`, and backs up any previous archive under `backups/`.
-
-### Update An Existing Backup
-
-Restore the current source:
-
-```bash
-./generateSourceFromZipFile.sh
-```
-
-Replace only the export files that changed, then rebuild the archive:
-
-```bash
-./zipSource.sh
-```
-
-### Inspect Derived Plaintext
+## Inspect Derived Plaintext
 
 Generate `target/` from the current source:
 
@@ -170,7 +207,7 @@ bitwarden-vault-json
 
 Without `--keep-target`, `target/` is removed automatically before the script exits.
 
-### Use RAM-Backed Paths
+## RAM-Backed Paths
 
 When `/dev/shm` exists and is writable, restore and target generation default to
 RAM-backed paths. You can also pass explicit roots:
