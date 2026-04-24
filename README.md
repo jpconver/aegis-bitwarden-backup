@@ -82,6 +82,14 @@ AEGIS_DROPBOX_CREDENTIALS_FILE="$HOME/.config/aegis/dropbox.json"
 EOF
 ```
 
+That creates `~/.config/aegis/config.env` with these contents:
+
+```text
+AEGIS_SECRETS_PATH="$HOME/projects/security/secrets"
+AEGIS_STATE_DIR="$HOME/.config/aegis"
+AEGIS_DROPBOX_CREDENTIALS_FILE="$HOME/.config/aegis/dropbox.json"
+```
+
 Create the secrets directory:
 
 ```bash
@@ -109,9 +117,7 @@ python3 ./authenticateDropbox.py \
 ```
 
 This command writes `~/.config/aegis/dropbox.json` with `app_key`,
-`app_secret`, and `refresh_token`. If you already have those values from a
-separate secure record, you can create that JSON file manually instead. Do not
-commit it.
+`app_secret`, and `refresh_token`. Do not commit that file.
 
 Place encrypted exports in `$HOME/projects/security/secrets/source/`:
 
