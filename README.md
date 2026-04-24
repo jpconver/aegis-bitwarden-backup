@@ -47,31 +47,15 @@ Scripts resolve paths in this order:
 3. `~/.config/aegis/config.env`, or the file pointed to by `AEGIS_CONFIG_FILE`
 4. Defaults under `~/projects/security/secrets` and `~/.config/aegis`
 
-Create a local config file:
-
-```bash
-mkdir -p ~/.config/aegis
-cp ./config.env.example ~/.config/aegis/config.env
-```
-
-Available config values:
+Supported config values:
 
 ```text
-AEGIS_SECRETS_PATH="$HOME/projects/security/secrets"
-AEGIS_STATE_DIR="$HOME/.config/aegis"
-AEGIS_DROPBOX_CREDENTIALS_FILE="$HOME/.config/aegis/dropbox.json"
+AEGIS_SECRETS_PATH
+AEGIS_STATE_DIR
+AEGIS_DROPBOX_CREDENTIALS_FILE
 ```
 
-The secrets directory uses this layout:
-
-```text
-$AEGIS_SECRETS_PATH/
-  source/            encrypted exports
-  source.7z          encrypted backup archive
-  source.7z.sha256   checksum for accidental corruption detection
-  target/            temporary derived plaintext output
-  backups/           previous source.7z copies
-```
+Use the recovery checklist below to create the local config file and directories.
 
 ## Full PC Setup Or Recovery
 
@@ -102,6 +86,17 @@ Create the secrets directory:
 
 ```bash
 mkdir -p "$HOME/projects/security/secrets/source"
+```
+
+The secrets directory uses this layout:
+
+```text
+$AEGIS_SECRETS_PATH/
+  source/            encrypted exports
+  source.7z          encrypted backup archive
+  source.7z.sha256   checksum for accidental corruption detection
+  target/            temporary derived plaintext output
+  backups/           previous source.7z copies
 ```
 
 Configure Dropbox credentials if you want to upload backups:
