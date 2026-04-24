@@ -76,7 +76,7 @@ class SourceArchiveTests(unittest.TestCase):
 
             zip_result = subprocess.run(
                 ["bash", str(ZIP_SOURCE)],
-                input="test-password\n",
+                input="test-password\ntest-password\n",
                 capture_output=True,
                 text=True,
                 cwd=ROOT,
@@ -127,7 +127,7 @@ class SourceArchiveTests(unittest.TestCase):
 
             first_zip = subprocess.run(
                 ["bash", str(ZIP_SOURCE)],
-                input="test-password\n",
+                input="test-password\ntest-password\n",
                 capture_output=True,
                 text=True,
                 cwd=ROOT,
@@ -140,7 +140,7 @@ class SourceArchiveTests(unittest.TestCase):
 
             second_zip = subprocess.run(
                 ["bash", str(ZIP_SOURCE)],
-                input="test-password\n",
+                input="test-password\ntest-password\n",
                 capture_output=True,
                 text=True,
                 cwd=ROOT,
@@ -175,7 +175,7 @@ class SourceArchiveTests(unittest.TestCase):
 
             zip_result = subprocess.run(
                 ["bash", str(ZIP_SOURCE), "--source-root", str(source_root)],
-                input="test-password\n",
+                input="test-password\ntest-password\n",
                 capture_output=True,
                 text=True,
                 cwd=ROOT,
@@ -202,7 +202,7 @@ class SourceArchiveTests(unittest.TestCase):
 
             rezip_result = subprocess.run(
                 ["bash", str(ZIP_SOURCE)],
-                input="test-password\n",
+                input="test-password\ntest-password\n",
                 capture_output=True,
                 text=True,
                 cwd=ROOT,

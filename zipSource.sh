@@ -149,6 +149,20 @@ fi
 
 read -rsp "Password del 7z: " zip_password
 printf "\n"
+read -rsp "Repeat password del 7z: " zip_password_confirm
+printf "\n"
+
+if [[ -z "$zip_password" ]]; then
+  printf 'Error: la password del 7z no puede estar vacia.\n' >&2
+  exit 1
+fi
+
+if [[ "$zip_password" != "$zip_password_confirm" ]]; then
+  printf 'Error: las passwords del 7z no coinciden.\n' >&2
+  exit 1
+fi
+
+unset zip_password_confirm
 
 if [[ "$backup_enabled" == "1" && -f "$archive_path" ]]; then
   mkdir -p "$backup_dir"
